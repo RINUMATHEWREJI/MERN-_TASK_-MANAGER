@@ -1,14 +1,28 @@
 const TaskModel = require('../models/Task.model');
 
-const getTask = async(req,res)=>{
-    try{
-        const tasks = await TaskModel.find();
-        return res.status(200).json(tasks);
-    }
-    catch(error){
-        return res.status(400).json({error:"no data found"});
-    }
+const getTask = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const total = await TaskModel.countDocuments();
+    const tasks = await TaskModel.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // optional: newest tasks first
+
+    return res.status(200).json({
+      tasks,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    return res.status(400).json({ error: "No data found" });
+  }
 };
+
 const createTask = async(req,res)=>{
     try{
         const task = await TaskModel.create(req.body);
