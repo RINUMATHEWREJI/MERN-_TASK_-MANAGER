@@ -6,9 +6,7 @@ const {ConnectDb} = require('./utils/ConnectDb');
 const Taskrouter = require('./routers/Task.router');
 
 const app = express();
-app.use(cors({
-    origin:'http://localhost:5173'
-}));
+app.use(cors());
 app.use(express.json());
 app.use('/tasks',Taskrouter);
 
