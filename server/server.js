@@ -4,11 +4,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const {ConnectDb} = require('./utils/ConnectDb');
 const Taskrouter = require('./routers/Task.router');
+const Authrouter = require('./routers/Auth.router');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/tasks',Taskrouter);
+app.use('/auth',Authrouter);
 
 app.get('/',(req,res)=>{
     console.log("Api is running");
