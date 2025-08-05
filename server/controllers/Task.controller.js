@@ -6,8 +6,8 @@ const getTask = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
-    const total = await TaskModel.countDocuments();
-    const tasks = await TaskModel.find()
+    const total = await TaskModel.countDocuments({user:req.userId});
+    const tasks = await TaskModel.find({user:req.userId})
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 }); // optional: newest tasks first
@@ -25,7 +25,7 @@ const getTask = async (req, res) => {
 
 const createTask = async(req,res)=>{
     try{
-        const task = await TaskModel.create(req.body);
+        const task = await TaskModel.create({...req.body,user:req.userId});
         return res.status(201).json(task);
     }
     catch(error){
@@ -36,7 +36,7 @@ const createTask = async(req,res)=>{
 const updateTask = async(req,res)=>{
     try{
         const {id} = req.params;
-        const task = await TaskModel.findByIdAndUpdate(id,req.body,{new:true});
+        const task = await TaskModel.findByIdAndUpdate({ _id: id, user: req.userId },req.body,{new:true});
         if (!task){
             return res.status(404).json({error:"task not found"});
         }
@@ -49,7 +49,7 @@ const updateTask = async(req,res)=>{
 const deleteTask = async(req,res)=>{
     try{
         const {id} = req.params;
-        const task = await TaskModel.findByIdAndDelete(id);
+        const task = await TaskModel.findByIdAndDelete({ _id: id, user: req.userId });
         if(!task){
             return res.status(404).json({error:"task not found"});
         }
