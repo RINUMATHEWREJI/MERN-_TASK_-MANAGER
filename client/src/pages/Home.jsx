@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
-function Home() {
+import { useNavigate } from "react-router-dom";
+function Home({setToken}) {
   const [tasks, setTasks] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
   const fetchTask = async () => {
     try {
       const res = await axios.get(`${API_URL}/tasks?page=${page}&limit=3`);
@@ -22,10 +24,17 @@ function Home() {
     window.scrollTo(0, 0);
     }, [page]);
 
+    const handleLogout = ()=>{
+      localStorage.removeItem('token');
+      setToken(null);
+      navigate('/login');
+    };
+
   return (
     <>
       <div className="main-container">
         <h1>Task Manager</h1>
+        <button className="logout" onClick={handleLogout}>Logout</button>
         <TaskForm onTaskCreated={fetchTask} />
         <TaskList tasks={tasks} onTaskUpdate={fetchTask} />
 
