@@ -3,15 +3,22 @@ import axios from "axios";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
 import { useNavigate } from "react-router-dom";
-function Home({setToken}) {
+function Home({ setToken }) {
   const [tasks, setTasks] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+
   const fetchTask = async () => {
     try {
-      const res = await axios.get(`${API_URL}/tasks?page=${page}&limit=3`);
+      const res = await axios.get(`${API_URL}/tasks?page=${page}&limit=3`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTasks(res.data.tasks);
       setTotalPages(res.data.totalPages);
     } catch (error) {
@@ -22,19 +29,21 @@ function Home({setToken}) {
   useEffect(() => {
     fetchTask();
     window.scrollTo(0, 0);
-    }, [page]);
+  }, [page]);
 
-    const handleLogout = ()=>{
-      localStorage.removeItem('token');
-      setToken(null);
-      navigate('/login');
-    };
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    navigate("/login");
+  };
 
   return (
     <>
       <div className="main-container">
         <h1>Task Manager</h1>
-        <button className="logout" onClick={handleLogout}>Logout</button>
+        <button className="logout" onClick={handleLogout}>
+          Logout
+        </button>
         <TaskForm onTaskCreated={fetchTask} />
         <TaskList tasks={tasks} onTaskUpdate={fetchTask} />
 
