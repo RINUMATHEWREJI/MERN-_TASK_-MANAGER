@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
 import axios from "axios";
 import { jwtDecode } from 'jwt-decode';
 import "./App.css";
 import Home from "./pages/Home";
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -15,45 +15,32 @@ import AdminPage from "./pages/Adminpage";
 import ManageTasks from "./pages/ManageTasks";
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const decoded = token ? jwtDecode(token) : null;
-  const role = decoded?.role;
-
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-  }, [token]);
+  const {token,user} = useContext(AuthContext);
+  const role = user?.role;
 
   return (
     <>
-      <Router>
         <Routes>
           <Route
             path="/"
             element={
               token ? (
-                role === "admin" ? (
-                  <Navigate to="/admin" />
-                ) : (
-                  <Home setToken={setToken} />
-                )
+                role === "admin" ? ( <Navigate to="/admin" /> ) : ( <Home /> )
               ) : (
                 <Navigate to="/login" />
               )
             }
           />
-          <Route path="/login" element={<Login setToken={setToken} />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route
             path="/admin"
             element={
-              token && role == "admin" ? <AdminPage setToken={setToken}/> : <Navigate to="/" />
+              token && role == "admin" ? <AdminPage /> : <Navigate to="/" />
             }
           />
           <Route path="/admin/users/:userId/tasks" element={token && role == 'admin' ? <ManageTasks /> : <Navigate to="/" />}/>
         </Routes>
-      </Router>
     </>
   );
 }

@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import '../css/AdminPage.css';
+import { AuthContext } from "../context/AuthContext";
 
-function AdminPage({ setToken }) {
+function AdminPage() {
+  const {token,setToken} = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const API_URL = import.meta.env.VITE_API_URL;
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +42,6 @@ function AdminPage({ setToken }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
     setToken(null);
     navigate("/login");
   };

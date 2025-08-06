@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import axios from "axios";
 import TaskForm from "../components/TaskForm";
 import TaskList from "../components/TaskList";
 import { useNavigate } from "react-router-dom";
-function Home({ setToken }) {
+import { AuthContext } from "../context/AuthContext";
+
+
+function Home() {
+  const {token,setToken} = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
 
 
   const fetchTask = async () => {
@@ -32,7 +35,6 @@ function Home({ setToken }) {
   }, [page]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
     setToken(null);
     navigate("/login");
   };
