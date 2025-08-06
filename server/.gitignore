@@ -12,3 +12,5 @@ npm-debug.log*
 # Build output (if you compile backend code)
 dist/
 build/
+
+adminseed.js

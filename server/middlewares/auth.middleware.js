@@ -7,9 +7,10 @@ const authMiddleware = (req,res,next)=>{
         if(!authHeader || !authHeader.startsWith('Bearer ')){
             return res.status(401).json({error:'authorization header missing'});
         }
-        const token = authHeader?.split(' ')[1];
+        const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token,JWT_SECRET);
         req.userId = decoded.userId;
+        req.role = decoded.role;
         next();
 
     }
@@ -19,4 +20,11 @@ const authMiddleware = (req,res,next)=>{
     }
 };
 
-module.exports = authMiddleware;
+const requireAdmin = (req,res,next)=>{
+    if (req.role !== 'admin'){
+        return res.status(403).json({error:'access denied'});
+    }
+    next();
+};
+
+module.exports = {authMiddleware,requireAdmin};

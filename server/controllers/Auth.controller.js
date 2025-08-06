@@ -8,8 +8,6 @@ const signup = async(req,res)=>{
     try{
         const user = new UserModel(req.body);
         await user.save()
-
-        const token = jwt.sign({userId:user._id},JWT_SECRET,{expiresIn:'1d'});
         return res.status(201).json({token});
     }
     catch(error){
@@ -25,7 +23,7 @@ const login = async(req,res)=>{
         if(!user || !(await user.comparePassword(req.body.password))){
             return res.status(401).json({error:'invalid credentials'});
         }
-        const token = jwt.sign({userId:user._id},JWT_SECRET,{expiresIn:'1d'});
+        const token = jwt.sign({userId:user._id,role:user.role},JWT_SECRET,{expiresIn:'1d'});
         return res.status(200).json({token});
 
     }
