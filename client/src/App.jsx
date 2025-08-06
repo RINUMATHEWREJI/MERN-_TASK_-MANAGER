@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import AdminPage from "./pages/Adminpage";
+import AdminPage from "./pages/AdminPage";
 import ManageTasks from "./pages/ManageTasks";
 
 function App() {
